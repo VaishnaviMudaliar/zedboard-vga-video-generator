@@ -2,6 +2,8 @@
 
 A simple FPGA-based VGA video generator for the **ZedBoard (Zynq-7000)** implemented in **Vivado IP Integrator**. The design generates video data using a custom AXI4-Stream source and displays it through the VGA interface.
 
+![Architecture Diagram](docs/vga_architecture_diagram.png)
+
 ## Overview
 
 This project demonstrates:
@@ -18,9 +20,9 @@ The design outputs 24-bit RGB video through the ZedBoard VGA interface.
 
 ---
 
-## Block Diagram
+## Vivado Block Diagram
 
-![Block Diagram](docs/block_diagram.png)
+![Block Diagram](docs/vga_block_diagram.png)
 
 ### Main Components
 
@@ -36,20 +38,7 @@ The design outputs 24-bit RGB video through the ZedBoard VGA interface.
 
 ---
 
-## System Architecture
 
-```text
-System Clock
-     │
-     ▼
- Clock Wizard
-     │
-     ▼
-  dataGen ── AXI4-Stream ──► AXI4S Video Out
-                                 │
-                                 ▼
-                        VGA RGB + HSYNC + VSYNC
-```
 
 ### Video Path
 
@@ -106,41 +95,174 @@ The custom video generator implements the standard AXI4-Stream Video interface:
 
 ### Software
 
-- Vivado 20XX.X (replace with your version)
+- Vivado 2023.2
 - Xilinx IP Catalog
 
 ---
 
 ## Building the Design
 
-1. Clone the repository:
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/<username>/<repo-name>.git
+git clone https://github.com/VaishnaviMudaliar/zedboard-vga-video-generator.git
+cd zedboard-vga-video-generator
 ```
 
-2. Open Vivado.
+---
 
-3. Open the project:
+### 2. Create a New Vivado Project
+
+1. Launch Vivado.
+2. Select **Create Project**.
+3. Enter a project name and location.
+4. Select **RTL Project**.
+5. Leave **Do not specify sources at this time** unchecked.
+6. Click **Next**.
+
+---
+
+### 3. Add Design Sources
+
+1. In the **Add Sources** window, click **Add Files**.
+2. Navigate to the repository's `rtl/` directory.
+3. Select all Verilog source files.
+4. Click **Finish**.
+
+Example:
 
 ```text
-File → Open Project
+zedboard-vga-video-generator/
+├── rtl/
+│   ├── dataGen.v
+│   ├── mux.v
+│   └── ...
 ```
 
-4. Generate the bitstream:
+---
+
+### 4. Add Constraints
+
+1. In the **Add Constraints** step, click **Add Files**.
+2. Select the constraint file from:
+
+```text
+constraints/zedboard.xdc
+```
+
+3. Click **Finish**.
+
+---
+
+### 5. Select the Target Device
+
+Choose the ZedBoard device:
+
+```text
+xc7z020clg484-1
+```
+
+or select:
+
+```text
+Boards → ZedBoard (Zynq-7000)
+```
+
+if the board files are installed.
+
+---
+
+### 6. Recreate the Block Design
+
+1. Open **IP Integrator**.
+2. Create a new Block Design.
+3. Add the required IP cores:
+
+   - Clocking Wizard
+   - Processor System Reset
+   - Video Timing Controller (VTC)
+   - AXI4-Stream to Video Out
+   - Constant
+   - Slice IPs
+
+4. Add the custom RTL modules:
+
+   - `dataGen`
+   - `mux`
+
+5. Connect the blocks according to the architecture diagram shown above.
+
+---
+
+### 7. Generate Output Products
+
+After completing the block design:
+
+```text
+Right Click Block Design
+    → Generate Output Products
+```
+
+Then:
+
+```text
+Right Click Block Design
+    → Create HDL Wrapper
+```
+
+Select:
+
+```text
+Let Vivado manage wrapper and auto-update
+```
+
+---
+
+### 8. Run Synthesis
+
+```text
+Flow Navigator → Run Synthesis
+```
+
+Resolve any warnings or errors before proceeding.
+
+---
+
+### 9. Generate Bitstream
 
 ```text
 Flow Navigator → Generate Bitstream
 ```
 
-5. Program the FPGA:
-
-```text
-Hardware Manager → Program Device
-```
+This process may take several minutes.
 
 ---
 
+### 10. Program the FPGA
+
+1. Connect the ZedBoard via JTAG.
+2. Power on the board.
+3. Open:
+
+```text
+Hardware Manager → Open Target → Auto Connect
+```
+
+4. Select the detected device.
+5. Click:
+
+```text
+Program Device
+```
+
+6. Choose the generated `.bit` file.
+
+---
+
+### 11. Verify VGA Output
+
+Connect a VGA monitor to the ZedBoard and verify that the generated video pattern appears correctly.
+---
 ## Repository Structure
 
 ```text
