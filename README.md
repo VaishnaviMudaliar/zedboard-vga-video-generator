@@ -145,16 +145,16 @@ Hardware Manager → Program Device
 
 ```text
 .
-├── src/
+├── rtl/
 │   ├── dataGen.v
 │   ├── mux.v
-│   └── ...
+│  
 ├── bd/
-│   └── design.bd
+│   └── vgaInterface.bd
 ├── constraints/
-│   └── zedboard.xdc
+│   └── constraints.xdc
 ├── docs/
-│   └── block_diagram.png
+│   └── vga_block_diagram.png
 └── README.md
 ```
 
@@ -168,15 +168,9 @@ Hardware Manager → Program Device
 - Dynamic resolution selection
 - Hardware sprites and graphics acceleration
 
----
 
-## Example Output
 
-Add screenshots of the VGA output here.
 
-```text
-docs/output_image.jpg
-```
 
 ---
 
